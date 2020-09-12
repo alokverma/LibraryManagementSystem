@@ -1,0 +1,17 @@
+package com.akki.di.module
+
+
+import com.akki.meesholibraryassignment.MainActivity
+import dagger.Module
+import dagger.android.ContributesAndroidInjector
+
+@Module
+abstract class ActivityBindingModule {
+
+    @ContributesAndroidInjector(
+        modules = [
+        ]
+    )
+    abstract fun bindsDashboardActivity(): MainActivity
+
+}
