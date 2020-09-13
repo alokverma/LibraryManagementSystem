@@ -1,9 +1,11 @@
 package com.akki.meesholibraryassignment.viewmodels
 
-import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.akki.data.utility.mapResponeToGeneric
 import com.akki.domain.base.ResultWrapper
+import com.akki.domain.enitity.ScanResult
 import com.akki.domain.usecase.EndSession
 import com.akki.domain.usecase.StartSession
 import com.akki.meesholibraryassignment.base.BaseViewModel
@@ -17,23 +19,51 @@ class WelcomeActivityViewModel @Inject constructor(
 ) :
     BaseViewModel() {
 
-    private val TAG = WelcomeActivityViewModel::class.java.name
-    private val result: MutableLiveData<String> = MutableLiveData()
+    private val startOrEndSessionLiveData = MutableLiveData<String>()
+
+    private val scanResultLiveData: MutableLiveData<ScanResult> = MutableLiveData()
+    private val errorResponse: MutableLiveData<Throwable> = MutableLiveData()
+    val isError: LiveData<Throwable>
+        get() = errorResponse
+
     private var tempDisposable: Disposable? = null
 
-    fun startSession(result: String) {
+//    fun startSession(result: String) {
+//        tempDisposable =
+//            startSession.execute(result).mapResponeToGeneric().subscribe { scanResult ->
+//                when (scanResult) {
+//                    is ResultWrapper.Error -> {
+//                        errorResponse.postValue(scanResult.throwable)
+//                    }
+//                    is ResultWrapper.Success -> {
+//                        scanResultLiveData.postValue(scanResult.data)
+//                    }
+//                }
+//            }
+//        tempDisposable?.track()
+//    }
+
+    private val sessionResult = Transformations.switchMap(
+        startOrEndSessionLiveData
+    ) {
         tempDisposable =
-            startSession.execute(result).mapResponeToGeneric().subscribe { scanResult ->
+            startSession.execute(it).mapResponeToGeneric().subscribe { scanResult ->
                 when (scanResult) {
                     is ResultWrapper.Error -> {
-                        Log.e(TAG, scanResult.throwable.toString())
+                        errorResponse.postValue(scanResult.throwable)
                     }
                     is ResultWrapper.Success -> {
-                        Log.e(TAG, scanResult.data.toString())
+                        scanResultLiveData.postValue(scanResult.data)
                     }
                 }
             }
+
         tempDisposable?.track()
+        scanResultLiveData
+    }
+
+    fun setSessionStartOrEnd(qrCodeResult: String) {
+        startOrEndSessionLiveData.postValue(qrCodeResult)
     }
 
     fun endSession(result: IntentResult) {
@@ -43,4 +73,6 @@ class WelcomeActivityViewModel @Inject constructor(
     fun postSession(result: String) {
         // postSessionUseCase.execute(result)
     }
+
+    fun getQRCodeResult() = sessionResult
 }

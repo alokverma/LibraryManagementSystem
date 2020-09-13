@@ -6,12 +6,9 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.akki.meesholibraryassignment.R
 import com.akki.meesholibraryassignment.viewmodels.WelcomeActivityViewModel
-import com.google.gson.JsonParser
 import com.google.zxing.integration.android.IntentIntegrator
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import org.json.JSONException
-import org.json.JSONObject
 import javax.inject.Inject
 
 
@@ -37,32 +34,22 @@ class WelcomeActivity : DaggerAppCompatActivity() {
     private fun initiateViewModel() {
         viewModel = ViewModelProvider(this, modelFactory)
             .get(WelcomeActivityViewModel::class.java)
-        // viewModel.startSession()
+
+        viewModel.isError.observe(this, {
+            Toast.makeText(this, "", Toast.LENGTH_LONG).show()
+        })
+
+        viewModel.getQRCodeResult().observe(this, {
+            Toast.makeText(this, it.locationDetails, Toast.LENGTH_LONG).show()
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null) {
-
-            viewModel.startSession(result.contents)
-
-            //if qrcode has nothing in it
+            viewModel.setSessionStartOrEnd(result.contents)
             if (result.contents == null) {
                 Toast.makeText(this, "Result Not Found", Toast.LENGTH_LONG).show()
-            } else {
-                //if qr contains data
-                try {
-                    //converting the data to json
-                    val obj = JSONObject(result.contents)
-                    //setting values to textviews
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                    //if control comes here
-                    //that means the encoded format not matches
-                    //in this case you can display whatever data is available on the qrcode
-                    //to a toast
-                    Toast.makeText(this, result.contents, Toast.LENGTH_LONG).show()
-                }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
