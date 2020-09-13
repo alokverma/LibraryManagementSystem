@@ -1,7 +1,7 @@
 package com.akki.di.module
 
 
-import com.akki.meesholibraryassignment.MainActivity
+import com.akki.meesholibraryassignment.ui.WelcomeActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -12,6 +12,6 @@ abstract class ActivityBindingModule {
         modules = [
         ]
     )
-    abstract fun bindsDashboardActivity(): MainActivity
+    abstract fun bindsDashboardActivity(): WelcomeActivity
 
 }
