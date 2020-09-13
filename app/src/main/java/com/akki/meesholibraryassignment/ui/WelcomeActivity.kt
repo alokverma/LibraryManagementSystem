@@ -1,6 +1,8 @@
 package com.akki.meesholibraryassignment.ui
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -20,10 +22,12 @@ class WelcomeActivity : DaggerAppCompatActivity() {
     @Inject
     lateinit var modelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: WelcomeActivityViewModel
+    private lateinit var myPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        myPref = getSharedPreferences("MeeshoPref", Context.MODE_PRIVATE)
         qrScan = IntentIntegrator(this)
         initiateViewModel()
         setQRContent()
@@ -36,6 +40,8 @@ class WelcomeActivity : DaggerAppCompatActivity() {
             tv_location_id.text = getString(R.string.location_id) + it.locationId
             tv_location_details.text = getString(R.string.location_details) + it.locationDetails
             tv_price.text = getString(R.string.price) + it.pricePerMin
+            ChronoMeterView.getInstance(chronometerView, "mainChronometer", myPref)
+                .startChronometer()
         })
     }
 
