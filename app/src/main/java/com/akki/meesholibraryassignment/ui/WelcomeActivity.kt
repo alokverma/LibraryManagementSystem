@@ -1,20 +1,21 @@
 package com.akki.meesholibraryassignment.ui
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.akki.meesholibraryassignment.R
 import com.akki.meesholibraryassignment.viewmodels.WelcomeActivityViewModel
 import com.google.zxing.integration.android.IntentIntegrator
+import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONException
 import org.json.JSONObject
 import javax.inject.Inject
 
 
-class WelcomeActivity : AppCompatActivity() {
+class WelcomeActivity : DaggerAppCompatActivity() {
 
     private val PERMISSION_REQUEST_CODE = 200
     private var qrScan: IntentIntegrator? = null
@@ -40,10 +41,13 @@ class WelcomeActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        viewModel.triggerSession(result)
-        // pass this result to viewmodel for checking error/ success conditions/
-
         if (result != null) {
+            val url: String = Uri.parse(result.contents)
+                .buildUpon()
+                .build()
+                .toString()
+            viewModel.startSession(url)
+
             //if qrcode has nothing in it
             if (result.contents == null) {
                 Toast.makeText(this, "Result Not Found", Toast.LENGTH_LONG).show()
@@ -65,6 +69,10 @@ class WelcomeActivity : AppCompatActivity() {
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
+    }
+
+    private fun postSession(result: String) {
+        viewModel.postSession(result)
     }
 
 
