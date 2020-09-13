@@ -35,17 +35,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.692" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_end_scan"
-        android:layout_width="wrap_content"
+    <include
+        layout="@layout/qr_content_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/end_scan"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/appCompatTextView"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="@+id/appCompatTextView"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.891" />
+        app:layout_constraintVertical_bias="0.254" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

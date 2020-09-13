@@ -3,4 +3,9 @@
     <string name="welcome_text">Welcome to Meesho Library</string>
     <string name="scan_barcode">Scan QRCode</string>
     <string name="end_scan">End Scan</string>
+    <string name="location_id">"Location Id : "</string>
+    <string name="location_details">Location Details : </string>
+    <string name="price">Price per minutes : </string>
+    <string name="start_time">Start Time</string>
+    <string name="end_session">End Session</string>
 </resources>

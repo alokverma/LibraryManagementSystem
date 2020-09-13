@@ -9,14 +9,13 @@ import com.akki.meesholibraryassignment.viewmodels.WelcomeActivityViewModel
 import com.google.zxing.integration.android.IntentIntegrator
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.qr_content_layout.*
 import javax.inject.Inject
 
 
 class WelcomeActivity : DaggerAppCompatActivity() {
 
-    private val PERMISSION_REQUEST_CODE = 200
     private var qrScan: IntentIntegrator? = null
-    private val mCameraId = -1
 
     @Inject
     lateinit var modelFactory: ViewModelProvider.Factory
@@ -25,10 +24,19 @@ class WelcomeActivity : DaggerAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        qrScan = IntentIntegrator(this);
-        qrScan?.setDesiredBarcodeFormats(listOf("QR_CODE"))
+        qrScan = IntentIntegrator(this)
         initiateViewModel()
+        setQRContent()
         btn_start_scan.setOnClickListener { qrScan?.initiateScan(); }
+    }
+
+    private fun setQRContent() {
+        viewModel.getQRCodeResult().observe(this, {
+            btn_start_scan.text = getString(R.string.end_session)
+            tv_location_id.text = getString(R.string.location_id) + it.locationId
+            tv_location_details.text = getString(R.string.location_details) + it.locationDetails
+            tv_price.text = getString(R.string.price) + it.pricePerMin
+        })
     }
 
     private fun initiateViewModel() {
@@ -59,56 +67,4 @@ class WelcomeActivity : DaggerAppCompatActivity() {
     private fun postSession(result: String) {
         viewModel.postSession(result)
     }
-
-
-//    private fun checkPermission(): Boolean {
-//        return ContextCompat.checkSelfPermission(
-//            this,
-//            Manifest.permission.CAMERA
-//        ) == PackageManager.PERMISSION_GRANTED
-//    }
-//
-//    private fun requestPermission() {
-//        ActivityCompat.requestPermissions(
-//            this, arrayOf(Manifest.permission.CAMERA),
-//            PERMISSION_REQUEST_CODE
-//        )
-//    }
-//
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<out String>,
-//        grantResults: IntArray
-//    ) {
-//        when (requestCode) {
-//            PERMISSION_REQUEST_CODE -> if (grantResults.size > 0 && grantResults[0] === PackageManager.PERMISSION_GRANTED) {
-//                Toast.makeText(applicationContext, "Permission Granted", Toast.LENGTH_SHORT).show()
-//
-//            } else {
-//                Toast.makeText(applicationContext, "Permission Denied", Toast.LENGTH_SHORT).show()
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-//                        != PackageManager.PERMISSION_GRANTED
-//                    ) {
-//                        showMessageOKCancel(
-//                            "You need to allow access permissions"
-//                        ) { _, _ ->
-//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                                requestPermission()
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
-//        AlertDialog.Builder(this@MainActivity)
-//            .setMessage(message)
-//            .setPositiveButton("OK", okListener)
-//            .setNegativeButton("Cancel", null)
-//            .create()
-//            .show()
-//    }
 }
