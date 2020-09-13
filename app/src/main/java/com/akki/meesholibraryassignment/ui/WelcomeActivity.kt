@@ -1,12 +1,12 @@
 package com.akki.meesholibraryassignment.ui
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.akki.meesholibraryassignment.R
 import com.akki.meesholibraryassignment.viewmodels.WelcomeActivityViewModel
+import com.google.gson.JsonParser
 import com.google.zxing.integration.android.IntentIntegrator
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
@@ -29,6 +29,7 @@ class WelcomeActivity : DaggerAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         qrScan = IntentIntegrator(this);
+        qrScan?.setDesiredBarcodeFormats(listOf("QR_CODE"))
         initiateViewModel()
         btn_start_scan.setOnClickListener { qrScan?.initiateScan(); }
     }
@@ -42,11 +43,8 @@ class WelcomeActivity : DaggerAppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null) {
-            val url: String = Uri.parse(result.contents)
-                .buildUpon()
-                .build()
-                .toString()
-            viewModel.startSession(url)
+
+            viewModel.startSession(result.contents)
 
             //if qrcode has nothing in it
             if (result.contents == null) {
