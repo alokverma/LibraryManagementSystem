@@ -3,9 +3,12 @@ package com.akki.data.repository
 import android.content.SharedPreferences
 import com.akki.domain.base.SessionKeys
 import com.akki.domain.base.SessionState
+import com.akki.domain.base.Utility
 import com.akki.domain.repository.SessionRepository
 import com.google.gson.Gson
 import com.google.gson.JsonParser
+import io.reactivex.Observable
+import java.util.*
 import javax.inject.Inject
 
 class SessionReposityImpl @Inject constructor(
@@ -19,26 +22,62 @@ class SessionReposityImpl @Inject constructor(
 //        TODO("Not yet implemented")
 //    }
 
+    var isValid: String = "valid"
+
     override fun startSession(data: String) {
-        // 1- if pref is empty then store the data in pref and update the ui
-        // 2- if pref is not empty then check this data with new data and if data matches
-        // show it to ui that data is not matching a
-        // 3- if data is matching then clear the session and update the ui and stop timer
-        //
+        val date = Date(System.currentTimeMillis())
+        val millis: Long = date.getTime()
         if (sessionPref.getString(SessionKeys.QR_CODE, "").equals("")) {
             sessionPref.edit().putInt(SessionKeys.SESSION_STATE, SessionState.STARTED.ordinal)
                 .apply()
+            sessionPref.edit().putLong(SessionKeys.START_TIME, millis).apply()
+            sessionPref.edit().putString(SessionKeys.QR_CODE, data).apply()
         } else {
-            // match data with equality if they are equal then save it
-            sessionPref.edit().putInt(SessionKeys.SESSION_STATE, SessionState.PAYMENT_SESSION.ordinal)
-                .apply()
+            val newScanResult = Utility.parseJSONtoScanResult(data, gson, parser)
+            val prevScanResult =
+                Utility.parseJSONtoScanResult(
+                    sessionPref.getString(SessionKeys.QR_CODE, ""),
+                    gson,
+                    parser
+                )
+            if (newScanResult?.locationId == prevScanResult?.locationId) {
+                sessionPref.edit().putInt(
+                    SessionKeys.SESSION_STATE,
+                    SessionState.PAYMENT_SESSION.ordinal
+                )
+                    .apply()
+                sessionPref.edit().putLong(SessionKeys.END_TIME, millis).apply()
+                sessionPref.edit().putString(SessionKeys.QR_CODE, data).apply()
+            } else {
+                //show user popup to scan correct bar code
+                isValid = "invalid"
+            }
+
         }
-        sessionPref.edit().putString(SessionKeys.QR_CODE, data).apply()
+
 
     }
 
     override fun endSession(data: String) {
         sessionPref.edit().putString(SessionKeys.QR_CODE, "").apply()
+        sessionPref.edit().putInt(SessionKeys.SESSION_STATE, SessionState.END_SESSION.ordinal)
+            .apply()
         sessionPref.edit().clear().apply()
     }
+
+    override fun getStartSessionTime(): Long {
+        return sessionPref.getLong(SessionKeys.START_TIME, 0L)
+    }
+
+
+    override fun getEndSessionTime(): Long {
+        return sessionPref.getLong(SessionKeys.END_TIME, 0L)
+    }
+
+    override fun checkIsSessionIsValid(): Observable<String> =
+        Observable.defer {
+            return@defer Observable.just(isValid)
+        }
+
+
 }

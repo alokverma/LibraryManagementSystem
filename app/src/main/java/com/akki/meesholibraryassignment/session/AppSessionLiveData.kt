@@ -3,6 +3,7 @@ package com.akki.meesholibraryassignment.session
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import com.akki.domain.base.SessionKeys.QR_CODE
+import com.akki.domain.base.Utility
 import com.akki.domain.enitity.ScanResult
 import com.google.gson.Gson
 import com.google.gson.JsonParser
@@ -22,15 +23,8 @@ class AppSessionLiveData @Inject constructor(
             }
         }
 
-    private fun parseString(data: String?): ScanResult? {
-        try {
-            val scanResult = gson.fromJson(parser.parse(data).asString, ScanResult::class.java)
-            return scanResult
-        } catch (e: UnsupportedOperationException) {
-            e.printStackTrace()
-        }
-        return null
-    }
+    private fun parseString(data: String?): ScanResult? =
+        Utility.parseJSONtoScanResult(data, gson, parser)
 
 
     override fun onActive() {

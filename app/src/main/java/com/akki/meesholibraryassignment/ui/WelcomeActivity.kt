@@ -3,6 +3,7 @@ package com.akki.meesholibraryassignment.ui
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -41,12 +42,12 @@ class WelcomeActivity : DaggerAppCompatActivity() {
         chronoMeter?.setInHourFormat()
         initiateViewModel()
         observeChanges()
+        viewModel.checkIfScanIsValid()
         btn_start_scan.setOnClickListener {
             if (btn_start_scan.text.toString() != "Pay")
                 qrScan?.initiateScan();
             else {
                 viewModel.postSession()
-                //
             }
         }
 
@@ -68,27 +69,19 @@ class WelcomeActivity : DaggerAppCompatActivity() {
                 ) == SessionState.STARTED.ordinal
             ) {
                 showStartSessionDetails(true)
-                tv_start_time.text =
-                    "start time"
-                if (!chronoMeter?.isRunning!!)
-                    chronoMeter?.startChronometer()
-                else
-                    chronoMeter?.resumeState()
-                btn_start_scan.text = "End Session"
+                attachStartSessionConent()
+
             } else if (myPref.getInt(
                     SessionKeys.SESSION_STATE,
                     SessionState.END_SESSION.ordinal
                 ) == SessionState.PAYMENT_SESSION.ordinal
             ) {
-                tv_end_time.text = "endTime"
-                tv_payment.text = "pay this amount"
-                btn_start_scan.text = "Pay"
-                chronoMeter?.pauseChronometer()
+                showStartSessionDetails(false)
+                attachPayementDetails()
             } else {
                 showStartSessionDetails(false)
                 tv_end_time.text = "endTime"
                 tv_payment.text = "pay this amount"
-                btn_start_scan.text = "Start Scan"
                 hideContentViewAndResetTimer()
             }
         }
@@ -108,12 +101,40 @@ class WelcomeActivity : DaggerAppCompatActivity() {
         } else {
             tv_end_time.visibility = View.VISIBLE
             tv_payment.visibility = View.VISIBLE
-            tv_start_time.visibility = View.GONE
+            tv_start_time.visibility = View.VISIBLE
             tv_location_id.visibility = View.GONE
             tv_location_details.visibility = View.GONE
             tv_price.visibility = View.GONE
         }
 
+    }
+
+    private fun attachStartSessionConent() {
+        viewModel.getStartTime()
+        viewModel.startDate.observe(this@WelcomeActivity, {
+            tv_start_time.text =
+                getString(R.string.start_time) + it
+        })
+        if (!chronoMeter?.isRunning!!)
+            chronoMeter?.startChronometer()
+        else
+            chronoMeter?.resumeState()
+    }
+
+    private fun attachPayementDetails() {
+        tv_end_time.text = "endTime"
+        tv_payment.text = "pay this amount"
+        viewModel.getEndTime()
+        viewModel.getStartTime()
+        viewModel.startDate.observe(this@WelcomeActivity, {
+            tv_start_time.text =
+                getString(R.string.start_time) + it
+        })
+        viewModel.endTime.observe(this@WelcomeActivity, {
+            tv_end_time.text =
+                getString(R.string.end_time) + it
+        })
+        chronoMeter?.pauseChronometer()
     }
 
     /**
@@ -126,6 +147,15 @@ class WelcomeActivity : DaggerAppCompatActivity() {
         })
         viewModel.showSessionIfActive().observe(this, {
             setQRContentData(it)
+        })
+
+        viewModel.getAppSessionStateLiveData().observe(this, {
+            btn_start_scan.text = it
+        })
+
+        viewModel.invalidScan.observe(this, {
+            //show popup
+            Log.e("tag", it.toString())
         })
     }
 
