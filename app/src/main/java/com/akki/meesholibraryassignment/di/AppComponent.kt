@@ -2,6 +2,7 @@ package com.akki.meesholibraryassignment.di
 
 import android.app.Application
 import com.akki.data.di.NetworkModule
+import com.akki.data.di.module.ApiModule
 import com.akki.di.module.ActivityBindingModule
 import com.akki.di.module.AppModule
 import com.akki.di.module.ViewModelFactoryModule
@@ -23,6 +24,7 @@ import javax.inject.Singleton
         ViewModelFactoryModule::class,
         NetworkModule::class,
         AppModule::class,
+        ApiModule::class,
         SharedPrefModule::class
     ]
 )

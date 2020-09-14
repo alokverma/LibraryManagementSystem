@@ -1,9 +1,9 @@
 package com.akki.meesholibraryassignment.ui
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -27,6 +27,7 @@ class WelcomeActivity : DaggerAppCompatActivity() {
     lateinit var modelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: WelcomeActivityViewModel
     private var chronoMeter: ChronoMeterView? = null
+    private var dialog: ProgressDialog? = null
 
     @Inject
     lateinit var myPref: SharedPreferences
@@ -97,9 +98,11 @@ class WelcomeActivity : DaggerAppCompatActivity() {
             tv_location_details.visibility = View.VISIBLE
             tv_price.visibility = View.VISIBLE
             tv_end_time.visibility = View.GONE
+            tv_total_time.visibility = View.GONE
             tv_payment.visibility = View.GONE
         } else {
             tv_end_time.visibility = View.VISIBLE
+            tv_total_time.visibility = View.VISIBLE
             tv_payment.visibility = View.VISIBLE
             tv_start_time.visibility = View.VISIBLE
             tv_location_id.visibility = View.GONE
@@ -122,18 +125,26 @@ class WelcomeActivity : DaggerAppCompatActivity() {
     }
 
     private fun attachPayementDetails() {
-        tv_end_time.text = "endTime"
-        tv_payment.text = "pay this amount"
-        viewModel.getEndTime()
         viewModel.getStartTime()
-        viewModel.startDate.observe(this@WelcomeActivity, {
+        viewModel.getEndTime()
+        viewModel.getTimeSpent().observe(this, {
+            tv_total_time.text = resources.getString(R.string.total_time_spent) + it?.toString()
+        })
+
+        viewModel.totalPrice().observe(this, {
+            tv_payment.text = getString(R.string.pay) + it?.toString()
+        })
+
+        viewModel.startDate.observe(this, {
             tv_start_time.text =
                 getString(R.string.start_time) + it
         })
+
         viewModel.endTime.observe(this@WelcomeActivity, {
             tv_end_time.text =
                 getString(R.string.end_time) + it
         })
+
         chronoMeter?.pauseChronometer()
     }
 
@@ -154,8 +165,24 @@ class WelcomeActivity : DaggerAppCompatActivity() {
         })
 
         viewModel.invalidScan.observe(this, {
-            //show popup
-            Log.e("tag", it.toString())
+
+        })
+
+        viewModel.getLoadingState().observe(this, {
+            if (it) {
+                dialog = ProgressDialog.show(
+                    WelcomeActivity@ this, "",
+                    getString(R.string.loading), true
+                )
+            } else {
+                Toast.makeText(
+                    WelcomeActivity@ this,
+                    getString(R.string.successfully_submit),
+                    Toast.LENGTH_LONG
+                ).show()
+                dialog?.dismiss()
+            }
+
         })
     }
 

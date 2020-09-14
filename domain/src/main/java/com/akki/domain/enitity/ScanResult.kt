@@ -9,4 +9,6 @@ data class ScanResult(
     val locationDetails: String? = "",
     @SerializedName("location_id")
     val locationId: String? = "",
+    var totalMin: Long = 0L,
+    var totalPrice: Float = 0F
 )

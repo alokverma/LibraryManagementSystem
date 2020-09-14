@@ -10,4 +10,8 @@
     <string name="end_session">End Session</string>
     <string name="start_session">Start Session</string>
     <string name="end_time">End Time : </string>
+    <string name="loading">Please wait....</string>
+    <string name="successfully_submit">Payment Successfully complete.</string>
+    <string name="total_time_spent">Total time spent : </string>
+    <string name="pay">"Please pay the amount : "</string>
 </resources>
