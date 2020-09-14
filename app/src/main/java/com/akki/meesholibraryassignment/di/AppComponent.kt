@@ -3,8 +3,10 @@ package com.akki.meesholibraryassignment.di
 import android.app.Application
 import com.akki.data.di.NetworkModule
 import com.akki.di.module.ActivityBindingModule
+import com.akki.di.module.AppModule
 import com.akki.di.module.ViewModelFactoryModule
 import com.akki.meesholibraryassignment.MeeshoApplication
+import com.akki.meesholibraryassignment.di.module.SharedPrefModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -19,7 +21,9 @@ import javax.inject.Singleton
         AndroidInjectionModule::class,
         ActivityBindingModule::class,
         ViewModelFactoryModule::class,
-        NetworkModule::class
+        NetworkModule::class,
+        AppModule::class,
+        SharedPrefModule::class
     ]
 )
 interface AppComponent : AndroidInjector<MeeshoApplication> {

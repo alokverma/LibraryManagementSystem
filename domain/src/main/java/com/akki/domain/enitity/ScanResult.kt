@@ -8,5 +8,5 @@ data class ScanResult(
     @SerializedName("location_details")
     val locationDetails: String? = "",
     @SerializedName("location_id")
-    val locationId: String? = ""
+    val locationId: String? = "",
 )
