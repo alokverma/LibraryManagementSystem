@@ -2,8 +2,9 @@ package com.akki.domain.base
 
 import com.akki.domain.enitity.ScanResult
 import com.google.gson.Gson
+import com.google.gson.JsonIOException
 import com.google.gson.JsonParser
-import com.google.gson.stream.MalformedJsonException
+import com.google.gson.JsonSyntaxException
 
 object Utility {
 
@@ -13,7 +14,9 @@ object Utility {
             return scanResult
         } catch (e: UnsupportedOperationException) {
             e.printStackTrace()
-        } catch (e: MalformedJsonException) {
+        } catch (e: JsonIOException) {
+            e.printStackTrace()
+        } catch (e: JsonSyntaxException) {
             e.printStackTrace()
         }
         return null
