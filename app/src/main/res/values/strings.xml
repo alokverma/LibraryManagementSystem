@@ -14,4 +14,5 @@
     <string name="successfully_submit">Payment Successfully complete.</string>
     <string name="total_time_spent">Total time spent : </string>
     <string name="pay">"Please pay the amount : "</string>
+    <string name="something_went_wrong">Something went wrong. Please try again.</string>
 </resources>

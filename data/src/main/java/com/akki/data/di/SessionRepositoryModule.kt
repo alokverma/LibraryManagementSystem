@@ -8,5 +8,5 @@ import dagger.Module
 @Module
 abstract class SessionRepositoryModule {
     @Binds
-    abstract fun getMovieRepo(movieRepositoryImpl: SessionReposityImpl): SessionRepository
+    abstract fun getSessionRepo(sessionRepository: SessionReposityImpl): SessionRepository
 }

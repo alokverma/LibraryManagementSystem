@@ -4,6 +4,7 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -154,7 +155,11 @@ class WelcomeActivity : DaggerAppCompatActivity() {
 
     private fun observeChanges() {
         viewModel.isError.observe(this, {
-            Toast.makeText(this, "", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                resources.getString(R.string.something_went_wrong),
+                Toast.LENGTH_LONG
+            ).show()
         })
         viewModel.showSessionIfActive().observe(this, {
             setQRContentData(it)
@@ -165,7 +170,7 @@ class WelcomeActivity : DaggerAppCompatActivity() {
         })
 
         viewModel.invalidScan.observe(this, {
-
+            Log.e("tag", it.toString())
         })
 
         viewModel.getLoadingState().observe(this, {
@@ -197,7 +202,7 @@ class WelcomeActivity : DaggerAppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        if (result != null) {
+        if (result != null && result.contents != null) {
             viewModel.setSessionStartOrEnd(
                 result.contents
             )

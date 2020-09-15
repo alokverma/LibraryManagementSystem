@@ -35,10 +35,10 @@ class WelcomeActivityViewModel @Inject constructor(
     private val startSessionTimeLiveData = MutableLiveData<Date>()
     private val endSessionTimeLiveData = MutableLiveData<Date>()
 
-    val invalidScan: LiveData<String>
-        get() = invalidScanLiveDaata
+    val invalidScan: LiveData<Boolean>
+        get() = invalidScanLiveData
 
-    private val invalidScanLiveDaata = MutableLiveData<String>()
+    private val invalidScanLiveData = MutableLiveData<Boolean>()
 
     val errorResponse: MutableLiveData<Throwable> = MutableLiveData()
 
@@ -106,7 +106,7 @@ class WelcomeActivityViewModel @Inject constructor(
 
     fun checkIfScanIsValid() {
         tempDisposable = inValidScanUseCase.execute("").subscribe {
-            invalidScanLiveDaata.postValue(it)
+            invalidScanLiveData.postValue(it)
         }
         tempDisposable?.track()
     }

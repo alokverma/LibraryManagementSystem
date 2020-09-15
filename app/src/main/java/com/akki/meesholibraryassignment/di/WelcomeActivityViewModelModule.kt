@@ -13,6 +13,6 @@ abstract class WelcomeActivityViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(WelcomeActivityViewModel::class)
-    internal abstract fun bindDashboardViewModel(viewModel: WelcomeActivityViewModel): ViewModel
+    internal abstract fun bindWelcomActvityViewModel(viewModel: WelcomeActivityViewModel): ViewModel
 
 }

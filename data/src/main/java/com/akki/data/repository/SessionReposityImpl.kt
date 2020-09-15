@@ -13,8 +13,10 @@ import com.google.gson.Gson
 import com.google.gson.JsonParser
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.subjects.PublishSubject
 import java.util.*
 import javax.inject.Inject
+
 
 class SessionReposityImpl @Inject constructor(
     private val gson: Gson,
@@ -30,7 +32,8 @@ class SessionReposityImpl @Inject constructor(
             .subscribeOn(schedulersFacade.io()).observeOn(schedulersFacade.ui())
     }
 
-    var isValid: String = "valid"
+
+    var isValid = PublishSubject.create<Boolean>()
 
     override fun startSession(data: String) {
         val date = Date(System.currentTimeMillis())
@@ -58,12 +61,10 @@ class SessionReposityImpl @Inject constructor(
                 sessionPref.edit().putString(SessionKeys.QR_CODE, data).apply()
             } else {
                 //show user popup to scan correct bar code
-                isValid = "invalid"
+                isValid.onNext(true)
+               // isValid.onComplete()
             }
-
         }
-
-
     }
 
     override fun endSession(data: String) {
@@ -82,10 +83,8 @@ class SessionReposityImpl @Inject constructor(
         return sessionPref.getLong(SessionKeys.END_TIME, 0L)
     }
 
-    override fun checkIsSessionIsValid(): Observable<String> =
-        Observable.defer {
-            return@defer Observable.just(isValid)
-        }
+    override fun checkIsSessionIsValid(): Observable<Boolean> =
+        isValid.subscribeOn(schedulersFacade.ui()).observeOn(schedulersFacade.ui())
 
 
 }

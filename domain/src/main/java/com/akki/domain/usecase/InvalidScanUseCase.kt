@@ -6,7 +6,7 @@ import io.reactivex.Observable
 import javax.inject.Inject
 
 class InvalidScanUseCase @Inject constructor(private val repo: SessionRepository) :
-    UseCaseWithParams<String, Observable<String>>() {
+    UseCaseWithParams<String, Observable<Boolean>>() {
 
-    override fun buildUseCase(params: String): Observable<String> = repo.checkIsSessionIsValid()
+    override fun buildUseCase(params: String): Observable<Boolean> = repo.checkIsSessionIsValid()
 }

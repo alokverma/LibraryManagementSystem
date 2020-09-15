@@ -4,6 +4,7 @@ import com.akki.domain.enitity.ScanResult
 import com.akki.domain.enitity.SessionSubmitResult
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.subjects.PublishSubject
 
 interface SessionRepository {
 
@@ -17,5 +18,5 @@ interface SessionRepository {
 
     fun getEndSessionTime(): Long
 
-    fun checkIsSessionIsValid(): Observable<String>
+    fun checkIsSessionIsValid(): Observable<Boolean>
 }
