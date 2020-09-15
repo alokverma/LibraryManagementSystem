@@ -23,14 +23,8 @@ class AppSessionLiveData @Inject constructor(
             }
         }
 
-    private fun parseString(data: String?): ScanResult? {
-        return if (Utility.parseJSONtoScanResult(data, gson, parser) == null) {
-            sessionCache.edit().clear().apply()
-            null
-        } else {
-            Utility.parseJSONtoScanResult(data, gson, parser)
-        }
-    }
+    private fun parseString(data: String?): ScanResult? =
+        Utility.parseJSONtoScanResult(data, gson, parser)
 
 
     override fun onActive() {

@@ -9,8 +9,9 @@ import com.google.gson.JsonSyntaxException
 object Utility {
 
     fun parseJSONtoScanResult(data: String?, gson: Gson, parser: JsonParser): ScanResult? {
+        var scanResult: ScanResult? = null
         try {
-            val scanResult = gson.fromJson(parser.parse(data).asString, ScanResult::class.java)
+            scanResult = gson.fromJson(parser.parse(data).asString, ScanResult::class.java)
             return scanResult
         } catch (e: UnsupportedOperationException) {
             e.printStackTrace()
@@ -18,6 +19,9 @@ object Utility {
             e.printStackTrace()
         } catch (e: JsonSyntaxException) {
             e.printStackTrace()
+            scanResult = ScanResult()
+            scanResult.isInValidQrCode = true
+            return scanResult
         }
         return null
     }

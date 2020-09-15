@@ -2,6 +2,7 @@ package com.akki.meesholibraryassignment.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.akki.data.repository.SessionReposityImpl
 import com.akki.data.utility.mapResponeToGeneric
 import com.akki.domain.base.ResultWrapper
 import com.akki.domain.base.Utility
@@ -22,25 +23,21 @@ class WelcomeActivityViewModel @Inject constructor(
     private val startSessionTime: GetStartSessionTime,
     private val endSessionTime: GetEndSessionTime,
     private val sessionStateLiveData: AppSessionState,
-    private val inValidScanUseCase: InvalidScanUseCase,
     private val postSession: PostSessionUseCase
 ) :
     BaseViewModel() {
 
     private val startSessionTimeLiveData = MutableLiveData<Date>()
     private val endSessionTimeLiveData = MutableLiveData<Date>()
-    private val invalidScanLiveData = MutableLiveData<Boolean>()
     private val errorResponse = MutableLiveData<Throwable>()
     private val loadingState = MutableLiveData<Boolean>()
     private val timeSpent = MutableLiveData<Long>()
     private val totalPrice = MutableLiveData<Float>()
     private val paymentStatus = MutableLiveData<SessionSubmitResult>()
+    private val errorState = MutableLiveData<String>()
 
     private var start: Long = 0
     private var end: Long = 0
-
-    val invalidScan: LiveData<Boolean>
-        get() = invalidScanLiveData
 
     val startDate: LiveData<Date>
         get() = startSessionTimeLiveData
@@ -64,7 +61,23 @@ class WelcomeActivityViewModel @Inject constructor(
 
 
     fun setSessionStartOrEnd(qrCodeResult: String) {
-        startSession.execute(qrCodeResult)
+        tempDisposable = startSession.execute(qrCodeResult).subscribe { it ->
+            when (it) {
+                SessionReposityImpl.SCANSTATE.SCAN_COMPLETED.ordinal -> {
+                    errorState.postValue(null)
+                }
+                SessionReposityImpl.SCANSTATE.SCAN_FAIL.ordinal -> {
+                    errorState.postValue("Scan Failed, please scan valid data")
+                }
+                SessionReposityImpl.SCANSTATE.SCAN_FAIL_DUE_TO_WRONG_QR_CODE.ordinal -> {
+                    errorState.postValue(
+                        "Invalid QRCode, Please scan same qr code that you" +
+                                " used for starting session"
+                    )
+                }
+            }
+            tempDisposable?.track()
+        }
     }
 
     private fun endSession() {
@@ -109,13 +122,6 @@ class WelcomeActivityViewModel @Inject constructor(
         endSessionTimeLiveData.postValue(Date(end))
     }
 
-    fun checkIfScanIsValid() {
-        tempDisposable = inValidScanUseCase.execute("").subscribe {
-            invalidScanLiveData.postValue(it)
-        }
-        tempDisposable?.track()
-    }
-
     fun getTimeSpent(): LiveData<Long> {
         timeSpent.postValue(Utility.getTimeDiff(start, end))
         return timeSpent
@@ -131,4 +137,6 @@ class WelcomeActivityViewModel @Inject constructor(
     }
 
     fun getPaymentStatusResult(): LiveData<SessionSubmitResult> = paymentStatus
+
+    fun getErrorState(): LiveData<String> = errorState
 }

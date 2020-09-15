@@ -18,4 +18,5 @@
     <string name="something_went_wrong">Something went wrong. Please try again.</string>
     <string name="minutes">Minutes</string>
     <string name="result_not_found">Result Not Found</string>
+    <string name="invalid_qr">QrCode is invalid, please scan valid qr code</string>
 </resources>

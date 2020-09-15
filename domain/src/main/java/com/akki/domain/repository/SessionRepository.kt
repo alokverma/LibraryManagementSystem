@@ -2,21 +2,33 @@ package com.akki.domain.repository
 
 import com.akki.domain.enitity.ScanResult
 import com.akki.domain.enitity.SessionSubmitResult
-import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.subjects.PublishSubject
 
 interface SessionRepository {
 
+    /*
+        post the session state to server
+     */
     fun postSession(scanResult: ScanResult): Single<SessionSubmitResult>
 
-    fun startSession(data: String)
+    /*
+        start the session when user clicks start button
+     */
+    fun startSession(data: String): Single<Int>
 
+    /*
+        end session when user clicks on end session
+     */
     fun endSession(data: String)
 
+    /*
+        return start time of session
+     */
     fun getStartSessionTime(): Long
 
+    /*
+        return end time of session
+     */
     fun getEndSessionTime(): Long
 
-    fun checkIsSessionIsValid(): Observable<Boolean>
 }

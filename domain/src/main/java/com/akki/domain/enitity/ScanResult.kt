@@ -10,5 +10,6 @@ data class ScanResult(
     @SerializedName("location_id")
     val locationId: String? = "",
     var totalMin: Long = 0L,
-    var totalPrice: Float = 0F
+    var totalPrice: Float = 0F,
+    var isInValidQrCode: Boolean = false
 )

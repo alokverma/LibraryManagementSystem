@@ -43,7 +43,6 @@ class WelcomeActivity : DaggerAppCompatActivity() {
         chronoMeter?.setInHourFormat()
         initiateViewModel()
         observeChanges()
-        viewModel.checkIfScanIsValid()
         btn_start_scan.setOnClickListener {
             if (sessionPref.getInt(
                     SessionKeys.SESSION_STATE,
@@ -90,7 +89,10 @@ class WelcomeActivity : DaggerAppCompatActivity() {
             }
         }
 
-        if (data == null) ll_content.visibility = View.GONE
+        if (data == null || data.isInValidQrCode) ll_content.visibility = View.GONE
+
+        if (data?.isInValidQrCode == true)
+            Toast.makeText(this, getString(R.string.invalid_qr), Toast.LENGTH_LONG).show()
 
     }
 
@@ -179,8 +181,10 @@ class WelcomeActivity : DaggerAppCompatActivity() {
             btn_start_scan.text = it
         })
 
-        viewModel.invalidScan.observe(this, {
-
+        viewModel.getErrorState().observe(this, { errState ->
+            if (errState != null) {
+                Toast.makeText(this, errState, Toast.LENGTH_LONG).show()
+            }
         })
 
         viewModel.getLoadingState().observe(this, {
