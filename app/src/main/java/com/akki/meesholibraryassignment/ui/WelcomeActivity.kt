@@ -4,13 +4,12 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
-import com.akki.domain.base.SessionKeys
-import com.akki.domain.base.SessionState
 import com.akki.domain.enitity.ScanResult
+import com.akki.domain.session.SessionKeys
+import com.akki.domain.session.SessionState
 import com.akki.meesholibraryassignment.R
 import com.akki.meesholibraryassignment.viewmodels.WelcomeActivityViewModel
 import com.google.zxing.integration.android.IntentIntegrator
@@ -31,7 +30,7 @@ class WelcomeActivity : DaggerAppCompatActivity() {
     private var dialog: ProgressDialog? = null
 
     @Inject
-    lateinit var myPref: SharedPreferences
+    lateinit var sessionPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,25 +38,30 @@ class WelcomeActivity : DaggerAppCompatActivity() {
         qrScan = IntentIntegrator(this)
         chronoMeter = ChronoMeterView.getInstance(
             chronometerView,
-            myPref
+            sessionPref
         )
         chronoMeter?.setInHourFormat()
         initiateViewModel()
         observeChanges()
         viewModel.checkIfScanIsValid()
         btn_start_scan.setOnClickListener {
-            if (btn_start_scan.text.toString() != "Pay")
-                qrScan?.initiateScan();
-            else {
+            if (sessionPref.getInt(
+                    SessionKeys.SESSION_STATE,
+                    SessionState.END_SESSION.ordinal
+                ) == SessionState.PAYMENT_SESSION.ordinal
+            ) {
                 viewModel.postSession()
+            } else {
+                qrScan?.initiateScan();
             }
+
         }
 
     }
 
     /**
      * set QR result on ui
-     * @param data contains all result
+     * @param data contains all scan result
      */
     private fun setQRContentData(data: ScanResult?) {
         data?.run {
@@ -65,7 +69,7 @@ class WelcomeActivity : DaggerAppCompatActivity() {
             tv_location_id.text = getString(R.string.location_id) + data?.locationId
             tv_location_details.text = getString(R.string.location_details) + data?.locationDetails
             tv_price.text = getString(R.string.price) + data?.pricePerMin
-            if (myPref.getInt(
+            if (sessionPref.getInt(
                     SessionKeys.SESSION_STATE,
                     SessionState.END_SESSION.ordinal
                 ) == SessionState.STARTED.ordinal
@@ -73,7 +77,7 @@ class WelcomeActivity : DaggerAppCompatActivity() {
                 showStartSessionDetails(true)
                 attachStartSessionConent()
 
-            } else if (myPref.getInt(
+            } else if (sessionPref.getInt(
                     SessionKeys.SESSION_STATE,
                     SessionState.END_SESSION.ordinal
                 ) == SessionState.PAYMENT_SESSION.ordinal
@@ -82,9 +86,7 @@ class WelcomeActivity : DaggerAppCompatActivity() {
                 attachPayementDetails()
             } else {
                 showStartSessionDetails(false)
-                tv_end_time.text = "endTime"
-                tv_payment.text = "pay this amount"
-                hideContentViewAndResetTimer()
+                chronoMeter?.stopChronometer()
             }
         }
 
@@ -92,6 +94,9 @@ class WelcomeActivity : DaggerAppCompatActivity() {
 
     }
 
+    /**
+     * show and hide the content based on session state
+     */
     private fun showStartSessionDetails(show: Boolean) {
         if (show) {
             tv_start_time.visibility = View.VISIBLE
@@ -113,6 +118,9 @@ class WelcomeActivity : DaggerAppCompatActivity() {
 
     }
 
+    /**
+     * show started session content
+     */
     private fun attachStartSessionConent() {
         viewModel.getStartTime()
         viewModel.startDate.observe(this@WelcomeActivity, {
@@ -125,6 +133,9 @@ class WelcomeActivity : DaggerAppCompatActivity() {
             chronoMeter?.resumeState()
     }
 
+    /**
+     * show payement information
+     */
     private fun attachPayementDetails() {
         viewModel.getStartTime()
         viewModel.getEndTime()
@@ -143,7 +154,7 @@ class WelcomeActivity : DaggerAppCompatActivity() {
 
         viewModel.endTime.observe(this@WelcomeActivity, {
             tv_end_time.text =
-                getString(R.string.end_time) + it
+                getString(R.string.end_time) + it + getString(R.string.minutes)
         })
 
         chronoMeter?.pauseChronometer()
@@ -152,7 +163,6 @@ class WelcomeActivity : DaggerAppCompatActivity() {
     /**
      * observe changes in live data if session updates
      */
-
     private fun observeChanges() {
         viewModel.isError.observe(this, {
             Toast.makeText(
@@ -170,7 +180,7 @@ class WelcomeActivity : DaggerAppCompatActivity() {
         })
 
         viewModel.invalidScan.observe(this, {
-            Log.e("tag", it.toString())
+
         })
 
         viewModel.getLoadingState().observe(this, {
@@ -180,19 +190,19 @@ class WelcomeActivity : DaggerAppCompatActivity() {
                     getString(R.string.loading), true
                 )
             } else {
+                dialog?.dismiss()
+            }
+        })
+
+        viewModel.getPaymentStatusResult().observe(this, { paymentInfo ->
+            if (paymentInfo.success) {
                 Toast.makeText(
                     WelcomeActivity@ this,
                     getString(R.string.successfully_submit),
                     Toast.LENGTH_LONG
                 ).show()
-                dialog?.dismiss()
             }
-
         })
-    }
-
-    private fun hideContentViewAndResetTimer() {
-        chronoMeter?.stopChronometer()
     }
 
     private fun initiateViewModel() {
@@ -207,7 +217,7 @@ class WelcomeActivity : DaggerAppCompatActivity() {
                 result.contents
             )
             if (result.contents == null) {
-                Toast.makeText(this, "Result Not Found", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.result_not_found), Toast.LENGTH_LONG).show()
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)

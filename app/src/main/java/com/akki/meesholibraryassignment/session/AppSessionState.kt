@@ -2,8 +2,9 @@ package com.akki.meesholibraryassignment.session
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
-import com.akki.domain.base.SessionKeys
-import com.akki.domain.base.SessionState
+import com.akki.domain.session.SessionButtonState
+import com.akki.domain.session.SessionKeys
+import com.akki.domain.session.SessionState
 import javax.inject.Inject
 
 class AppSessionState @Inject constructor(
@@ -19,11 +20,11 @@ class AppSessionState @Inject constructor(
                     SessionState.END_SESSION.ordinal
                 )
                 if (state == SessionState.STARTED.ordinal) {
-                    value = "End Session"
+                    value = SessionButtonState.END_SESSION.toString()
                 } else if (state == SessionState.PAYMENT_SESSION.ordinal) {
-                    value = "Pay"
+                    value = SessionButtonState.PAY_SESSION.toString()
                 } else {
-                    value = "Scan QRCode"
+                    value = SessionButtonState.SCAN_QR_CODE.toString()
                 }
             }
         }
@@ -36,11 +37,11 @@ class AppSessionState @Inject constructor(
             SessionState.END_SESSION.ordinal
         )
         if (state == SessionState.STARTED.ordinal) {
-            value = "End Session"
+            value = SessionButtonState.END_SESSION.toString()
         } else if (state == SessionState.PAYMENT_SESSION.ordinal) {
-            value = "Pay"
+            value = SessionButtonState.PAY_SESSION.toString()
         } else {
-            value = "Scan QRCode"
+            value = SessionButtonState.SCAN_QR_CODE.toString()
         }
         sessionCache.registerOnSharedPreferenceChangeListener(mSessionDataListener)
     }

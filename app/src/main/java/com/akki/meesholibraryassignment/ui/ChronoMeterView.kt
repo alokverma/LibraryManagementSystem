@@ -3,9 +3,9 @@ package com.akki.meesholibraryassignment.ui
 import android.content.SharedPreferences
 import android.os.SystemClock
 import android.widget.Chronometer
-import com.akki.domain.base.SessionKeys.KEY_BASE
-import com.akki.domain.base.SessionKeys.KEY_STATE
-import com.akki.domain.base.SessionKeys.KEY_TIME_PAUSED
+import com.akki.domain.session.SessionKeys.KEY_BASE
+import com.akki.domain.session.SessionKeys.KEY_STATE
+import com.akki.domain.session.SessionKeys.KEY_TIME_PAUSED
 
 class ChronoMeterView private constructor(private val sessionPref: SharedPreferences) {
 

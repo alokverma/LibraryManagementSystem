@@ -3,8 +3,8 @@ package com.akki.data.repository
 import android.content.SharedPreferences
 import com.akki.data.apiservice.ApiService
 import com.akki.data.utility.SchedulersFacade
-import com.akki.domain.base.SessionKeys
-import com.akki.domain.base.SessionState
+import com.akki.domain.session.SessionKeys
+import com.akki.domain.session.SessionState
 import com.akki.domain.base.Utility
 import com.akki.domain.enitity.ScanResult
 import com.akki.domain.enitity.SessionSubmitResult

@@ -6,6 +6,7 @@ import com.akki.data.utility.mapResponeToGeneric
 import com.akki.domain.base.ResultWrapper
 import com.akki.domain.base.Utility
 import com.akki.domain.enitity.ScanResult
+import com.akki.domain.enitity.SessionSubmitResult
 import com.akki.domain.usecase.*
 import com.akki.meesholibraryassignment.base.BaseViewModel
 import com.akki.meesholibraryassignment.session.AppSessionLiveData
@@ -26,29 +27,26 @@ class WelcomeActivityViewModel @Inject constructor(
 ) :
     BaseViewModel() {
 
+    private val startSessionTimeLiveData = MutableLiveData<Date>()
+    private val endSessionTimeLiveData = MutableLiveData<Date>()
+    private val invalidScanLiveData = MutableLiveData<Boolean>()
+    private val errorResponse = MutableLiveData<Throwable>()
+    private val loadingState = MutableLiveData<Boolean>()
+    private val timeSpent = MutableLiveData<Long>()
+    private val totalPrice = MutableLiveData<Float>()
+    private val paymentStatus = MutableLiveData<SessionSubmitResult>()
+
+    private var start: Long = 0
+    private var end: Long = 0
+
+    val invalidScan: LiveData<Boolean>
+        get() = invalidScanLiveData
+
     val startDate: LiveData<Date>
         get() = startSessionTimeLiveData
 
     val endTime: LiveData<Date>
         get() = endSessionTimeLiveData
-
-    private val startSessionTimeLiveData = MutableLiveData<Date>()
-    private val endSessionTimeLiveData = MutableLiveData<Date>()
-
-    val invalidScan: LiveData<Boolean>
-        get() = invalidScanLiveData
-
-    private val invalidScanLiveData = MutableLiveData<Boolean>()
-
-    val errorResponse: MutableLiveData<Throwable> = MutableLiveData()
-
-    private val loadingState: MutableLiveData<Boolean> = MutableLiveData()
-
-    private val timeSpent: MutableLiveData<Long> = MutableLiveData()
-    private val totalPrice: MutableLiveData<Float> = MutableLiveData()
-
-    private var start: Long = 0
-    private var end: Long = 0
 
     val isError: LiveData<Throwable>
         get() = errorResponse
@@ -57,7 +55,9 @@ class WelcomeActivityViewModel @Inject constructor(
         return appSessionLiveData
     }
 
-
+    /**
+     * contains session data in pref
+     */
     fun getAppSessionStateLiveData(): LiveData<String> = sessionStateLiveData
 
     private var tempDisposable: Disposable? = null
@@ -67,10 +67,13 @@ class WelcomeActivityViewModel @Inject constructor(
         startSession.execute(qrCodeResult)
     }
 
-    fun endSession() {
+    private fun endSession() {
         endSession.execute("endSession")
     }
 
+    /**
+     * Post session data to server when pay clicked
+     */
     fun postSession() {
         appSessionLiveData.value?.let {
             loadingState.postValue(true)
@@ -84,6 +87,7 @@ class WelcomeActivityViewModel @Inject constructor(
                     }
                     is ResultWrapper.Success -> {
                         loadingState.postValue(false)
+                        paymentStatus.postValue(result.data)
                         endSession()
                     }
                 }
@@ -91,6 +95,7 @@ class WelcomeActivityViewModel @Inject constructor(
         }
         tempDisposable?.track()
     }
+
 
     fun getStartTime() {
         start = startSessionTime.execute("")
@@ -124,4 +129,6 @@ class WelcomeActivityViewModel @Inject constructor(
         )
         return totalPrice
     }
+
+    fun getPaymentStatusResult(): LiveData<SessionSubmitResult> = paymentStatus
 }

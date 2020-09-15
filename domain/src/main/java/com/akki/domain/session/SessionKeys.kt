@@ -1,4 +1,4 @@
-package com.akki.domain.base
+package com.akki.domain.session
 
 object SessionKeys {
 

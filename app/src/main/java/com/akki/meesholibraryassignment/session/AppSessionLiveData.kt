@@ -2,9 +2,9 @@ package com.akki.meesholibraryassignment.session
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
-import com.akki.domain.base.SessionKeys.QR_CODE
 import com.akki.domain.base.Utility
 import com.akki.domain.enitity.ScanResult
+import com.akki.domain.session.SessionKeys.QR_CODE
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import javax.inject.Inject
@@ -23,8 +23,14 @@ class AppSessionLiveData @Inject constructor(
             }
         }
 
-    private fun parseString(data: String?): ScanResult? =
-        Utility.parseJSONtoScanResult(data, gson, parser)
+    private fun parseString(data: String?): ScanResult? {
+        return if (Utility.parseJSONtoScanResult(data, gson, parser) == null) {
+            sessionCache.edit().clear().apply()
+            null
+        } else {
+            Utility.parseJSONtoScanResult(data, gson, parser)
+        }
+    }
 
 
     override fun onActive() {
