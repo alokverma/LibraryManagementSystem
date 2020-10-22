@@ -30,4 +30,6 @@ abstract class UseCaseWithParams<in Params, out R> {
      */
     abstract fun buildUseCase(params: Params): R
 
+
+
 }
