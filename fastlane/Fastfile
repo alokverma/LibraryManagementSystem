@@ -17,26 +17,39 @@ default_platform(:android)
 
 platform :android do
 
-  before_all do
-    ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
-  end
+    ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
 
   desc "Deploy a new version to the Google Play"
   lane :deploy do
     gradle(task: "clean assembleRelease")
-    upload_to_play_store
+    msg = "custom message"
+    upload_to_play_store()
+    slack_message(content:msg)
   end
 
-  after_all do |lane|
+ lane :slack_message do | options |
+    content = options[:content]
     slack(
-        message: "Successfull deployed new app"
-    )
-  end
+        message: content,
+        payload: {
+            "Build Date" => Time.new.to_s,
+            "Built by" => "Jenkins",
+            "extra message"=> content,
+        },
+        default_payloads: [:git_branch]
+
+      )
+ end
 
   error do |lane, exception|
    slack(
         message: exception.message,
-        success: false
+        success: false,
+        payload: {
+                    "Build Date" => Time.new.to_s,
+                    "Built by" => "Jenkins",
+                },
+                default_payloads: [:git_branch]
       )
    end
  end

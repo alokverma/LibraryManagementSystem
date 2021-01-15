@@ -21,6 +21,11 @@ or alternatively using `brew install fastlane`
 fastlane android deploy
 ```
 Deploy a new version to the Google Play
+### android slack_message
+```
+fastlane android slack_message
+```
+
 
 ----
 
