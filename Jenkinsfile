@@ -3,12 +3,6 @@ def fastlane_command
 try {
 
     node {
-        stage('fastlane'){
-            sh fastlane_command
-        }
-        stage('Preparation') {
-            git credentialsId: 'fef4159e-285b-45d9-80ca-5981c4576ba5', url: 'https://github.com/prashant-bhatasana/demoApp/'
-        }
 
         stage('Dependencies') {
                 sh 'sudo npm install -g react-native-cli'
