@@ -21,6 +21,7 @@ try {
         }
 
 
+
         stage('Build release ') {
                sh './gradlew assembleRelease'
         }
