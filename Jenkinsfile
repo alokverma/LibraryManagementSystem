@@ -20,6 +20,7 @@ try {
                sh './gradlew clean'
         }
 
+
         stage('Build release ') {
                sh './gradlew assembleRelease'
         }
