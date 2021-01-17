@@ -17,7 +17,7 @@ try {
         }
 
         stage('Clean Build') {
-               sh './android/gradlew clean'
+               sh './gradlew clean'
         }
 
         stage('Build release ') {
