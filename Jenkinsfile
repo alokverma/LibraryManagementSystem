@@ -5,7 +5,7 @@ try {
     node {
 
         stage('Git Checkout') {
-            git url: 'https://github.com/prashant-bhatasana/demoApp/'
+            git url: 'https://github.com/alokverma/LibraryManagementSystem.git'
         }
 
         stage('Dependencies') {
