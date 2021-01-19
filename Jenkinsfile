@@ -4,9 +4,7 @@ try {
 
     node {
 
-      def isMainline = ["develop", "master"].contains(env.BRANCH_NAME)
-
-      echo "isMainline is ${isMainline}"
+      def isMainline = ["develop", "master","jenkins"].contains(env.BRANCH_NAME)
 
         List environment = [
             "GOOGLE_APPLICATION_CREDENTIALS=$HOME/.android/meesho-d2e66-7cd4a74d3a8c.json"
@@ -32,17 +30,18 @@ try {
                sh './gradlew assembleRelease'
         }
 
+        if (isMainline) {
+
                 stage 'Archive'
                      archiveArtifacts artifacts: 'app/build/outputs/apk/release/*.apk', fingerprint: false, allowEmptyArchive: false
 
                   stage ('Distribute') {
                       withEnv(environment) {
-                      echo "environment is ${enviornment}"
                           sh "./gradlew assembleRelease appDistributionUploadRelease"
                       }
                   }
 
-
+            }
 
 
     }
@@ -50,7 +49,6 @@ try {
 } catch (caughtError) {
 
     err = caughtError
-    echo "error is ${err}"
     currentBuild.result = "FAILURE"
 
 } finally {
