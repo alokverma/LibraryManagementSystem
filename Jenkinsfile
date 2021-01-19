@@ -30,8 +30,6 @@ try {
                sh './gradlew assembleRelease'
         }
 
-        if (isMainline) {
-
                 stage 'Archive'
                      archiveArtifacts artifacts: 'app/build/outputs/apk/release/*.apk', fingerprint: false, allowEmptyArchive: false
 
@@ -41,7 +39,7 @@ try {
                       }
                   }
 
-            }
+
 
 
     }
