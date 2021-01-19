@@ -30,6 +30,7 @@ try {
                sh './gradlew assembleRelease'
         }
 
+         echo "ismainlne value ${isMainline}"
         if (isMainline) {
 
                 stage 'Archive'
