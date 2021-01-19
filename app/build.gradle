@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.firebase.appdistribution'
 
 android {
     compileSdkVersion 29
@@ -21,8 +22,17 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            firebaseAppDistribution {
+                releaseNotes = "Test Notes"
+                appId = "1:363930757072:android:bfce7597ffeede935fbbd5"
+                apkPath = "/Users/akki/Desktop/AndroidPrjcrs/MeeshoLibraryAssignment/app/build/outputs/apk/release/app-release-unsigned.apk"
+                serviceCredentialsFile = System.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+                groups='meesho_testers'
+            }
         }
     }
+
+
 
     compileOptions {
         sourceCompatibility 1.8
@@ -50,4 +60,5 @@ dependencies {
 
     //implementation 'me.dm7.barcodescanner:zxing:1.9.13'
     implementation 'com.journeyapps:zxing-android-embedded:3.4.0'
+    apply plugin: 'com.google.firebase.appdistribution'
 }
