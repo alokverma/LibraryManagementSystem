@@ -31,6 +31,7 @@ try {
         }
 
          echo "ismainlne value ${isMainline}"
+         echo "env is ${environment}"
         if (isMainline) {
 
                 stage 'Archive'
