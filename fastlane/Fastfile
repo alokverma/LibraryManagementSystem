@@ -42,7 +42,7 @@ platform :android do
       )
  end
 
- lane notify_release do | options |
+ lane :notify_release do | options |
     message = options[:content]
     slack_message(content:message)
  end
