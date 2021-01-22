@@ -17,7 +17,7 @@ default_platform(:android)
 
 platform :android do
 
-    ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
+    ENV["SLACK_URL"] = "https://hooks.slack.com/services/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"
 
   desc "Deploy a new version to the Google Play"
   lane :deploy do

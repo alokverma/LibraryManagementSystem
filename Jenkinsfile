@@ -4,6 +4,7 @@ try {
 
     node {
 
+
       def isMainline = ["develop", "master","jenkins"].contains(env.BRANCH_NAME)
 
         List environment = [
