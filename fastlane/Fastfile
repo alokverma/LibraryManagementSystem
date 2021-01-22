@@ -42,6 +42,11 @@ platform :android do
       )
  end
 
+ lane notify do |options |
+    message = options[:content]
+    slack_message(content:message)
+ end
+
   error do |lane, exception|
    slack(
         message: exception.message,
