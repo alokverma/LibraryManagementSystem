@@ -26,6 +26,7 @@ android {
                 releaseNotes = "Test Notes"
                 appId = "1:363930757072:android:bfce7597ffeede935fbbd5"
                 apkPath = "/Users/akki/Desktop/AndroidPrjcrs/MeeshoLibraryAssignment/app/build/outputs/apk/release/app-release-unsigned.apk"
+                serviceCredentialsFile = System.getenv("GOOGLE_APPLICATION_CREDENTIALS")
                 groups='meesho_testers'
             }
         }
