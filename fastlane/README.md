@@ -26,6 +26,11 @@ Deploy a new version to the Google Play
 fastlane android slack_message
 ```
 
+### android notify_release
+```
+fastlane android notify_release
+```
+
 
 ----
 

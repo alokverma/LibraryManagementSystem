@@ -5,12 +5,17 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000795">
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000652">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: slack" time="7.796749">
+      <testcase classname="fastlane.lanes" name="1: Switch to android slack_message lane" time="0.000786">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: slack" time="0.896185">
         
       </testcase>
     

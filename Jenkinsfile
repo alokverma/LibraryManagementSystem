@@ -33,7 +33,6 @@ try {
 
          echo "ismainlne value ${isMainline}"
          echo "env is ${environment}"
-        if (isMainline) {
 
                 stage 'Archive'
                      archiveArtifacts artifacts: 'app/build/outputs/apk/release/*.apk', fingerprint: false, allowEmptyArchive: false
@@ -44,7 +43,6 @@ try {
                       }
                   }
 
-            }
 
 
     }
