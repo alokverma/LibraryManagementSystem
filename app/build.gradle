@@ -3,7 +3,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.firebase.appdistribution'
+apply from :  "$rootDir/versions.gradle"
 
+def getMyVersionCode = { ->
+    def code = project.hasProperty('versionCode') ? versionCode.toInteger() : -1
+    println "VersionCode is set to $code"
+    return code
+}
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -12,10 +18,18 @@ android {
         applicationId "com.akki.meesholibraryassignment"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 1
+        versionCode getMyVersionCode()
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    task showVersion  {
+        // Use inherited method
+        doLast {
+            println 'VersionName: ' + getMyVersionCode()
+        }
+
     }
 
     buildTypes {
@@ -40,6 +54,7 @@ android {
     }
 
 
+
 }
 
 dependencies {
@@ -62,3 +77,4 @@ dependencies {
     implementation 'com.journeyapps:zxing-android-embedded:3.4.0'
 
 }
+
