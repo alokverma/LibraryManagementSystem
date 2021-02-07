@@ -38,7 +38,7 @@ android {
             firebaseAppDistribution {
                 releaseNotes = "Test Notes"
                 appId = "1:363930757072:android:bfce7597ffeede935fbbd5"
-                apkPath = "/Users/akki/Desktop/AndroidPrjcrs/MeeshoLibraryAssignment/app/build/outputs/apk/release/*.apk"
+                apkPath = "/Users/akki/Desktop/AndroidPrjcrs/MeeshoLibraryAssignment/app/build/outputs/apk/release/app-release-unsigned.apk"
                 serviceCredentialsFile = "$rootDir/meesho_distribution.json"
                 groups='meesho_testers'
             }
