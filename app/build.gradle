@@ -3,7 +3,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.firebase.appdistribution'
-apply from :  "$rootDir/versions.gradle"
 
 def getMyVersionCode = { ->
     def code = project.hasProperty('versionCode') ? versionCode.toInteger() : -1
