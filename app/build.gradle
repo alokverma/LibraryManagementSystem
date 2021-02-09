@@ -9,6 +9,7 @@ def getMyVersionCode = { ->
     println "VersionCode is set to $code"
     return code
 }
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -17,20 +18,48 @@ android {
         applicationId "com.akki.meesholibraryassignment"
         minSdkVersion 16
         targetSdkVersion 29
+        def isVersionOverride =  project.hasProperty('isVersionOverride') ? isVersionOverride.toBoolean() : false
+        println "isVersionOverride is set to $isVersionOverride"
+        if (isVersionOverride)
         versionCode getMyVersionCode()
+        else versionCode 4
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+
     task showVersion  {
         // Use inherited method
         doLast {
-            println 'VersionName: ' + getMyVersionCode()
+            android.productFlavors.all { flavor ->
+                println 'flavor.name: ' + flavor.name
+                flavor.versionName = "aaa"
+                if(flavor.name == "prod"){
+                    flavor.versionCode = getMyVersionCode()
+                    assembleStagingDebug.doFirst {
+                        start()
+                    }
+                    assembleStagingDebug.doLast {
+                        end()
+                    }
+                }
+            }
         }
 
     }
 
+    flavorDimensions "mode"
+    productFlavors{
+        prod{
+            dimension "mode"
+        }
+
+        staging{
+            dimension "mode"
+          //  versionCode getMyVersionCode()
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -38,7 +67,6 @@ android {
             firebaseAppDistribution {
                 releaseNotes = "Test Notes"
                 appId = "1:363930757072:android:bfce7597ffeede935fbbd5"
-                apkPath = "/Users/akki/Desktop/AndroidPrjcrs/MeeshoLibraryAssignment/app/build/outputs/apk/release/app-release-unsigned.apk"
                 serviceCredentialsFile = "$rootDir/meesho_distribution.json"
                 groups='meesho_testers'
             }
