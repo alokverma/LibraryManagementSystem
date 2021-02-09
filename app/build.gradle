@@ -30,6 +30,7 @@ android {
 
 
     task showVersion  {
+
         // Use inherited method
         doLast {
             android.productFlavors.all { flavor ->
